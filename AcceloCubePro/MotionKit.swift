@@ -34,7 +34,7 @@ final class MotionVM: ObservableObject {
     @Published var usingDeviceMotion: Bool = false
     @Published var authorizationStatus: CMAuthorizationStatus = .notDetermined
     @Published var positionTrail: [SIMD3<Float>] = []  // Stretch Goal 1
-    @Published var velocity: SIMD3<Float> = .zero  // Exposed for UI display
+    @Published var velocity: SIMD3<Float> = .zero
     
     let mgr = CMMotionManager()
     
@@ -73,7 +73,7 @@ final class MotionVM: ObservableObject {
                 status = "Unknown authorization status"
             }
         } else {
-            // For iOS < 11, assume authorized
+            // assume authorized
             authorizationStatus = .authorized
             status = "Ready"
         }
@@ -131,12 +131,12 @@ final class MotionVM: ObservableObject {
             let now = CACurrentMediaTime()
             let ts = dm.timestamp
             
-            // Calculate sensor latency (now - timestamp)
+            // Calculate sensor latency
             let sensorLatencyMs = (now - ts) * 1000.0
             
             let dt: Double
             if let last = self.lastTimestamp {
-                dt = max(0, min(ts - last, 1.0)) // Cap dt at 1 second
+                dt = max(0, min(ts - last, 1.0))
             } else {
                 dt = 0
             }
@@ -157,7 +157,7 @@ final class MotionVM: ObservableObject {
 
             // world coordinates
             let qWorld = self.neutralInv.inverse * q
-            let aWorld = qWorld.act(hpAccel) * 9.81 // Scale to m/s²
+            let aWorld = qWorld.act(hpAccel) * 9.81
 
             // Velocity integration with damping
             var vNew = self.v + aWorld * Float(dt)
@@ -213,7 +213,7 @@ final class MotionVM: ObservableObject {
                     }
                 }
                 
-                // Stretch Goal 2: Haptic feedback on saturation
+                // Stretch Goal 2, Haptic feedback on saturation
                 if didSaturate && self.cfg.hapticsEnabled {
                     let now = Date()
                     if now.timeIntervalSince(self.saturationHapticTimer) > 0.5 {
@@ -228,7 +228,7 @@ final class MotionVM: ObservableObject {
             }
         }
         
-        // Re-check authorization after starting (iOS might prompt)
+        // Re-check authorization
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.checkAuthorization()
         }
@@ -410,7 +410,7 @@ struct SceneViewBridge: UIViewRepresentable {
         let floorNode = SCNNode(geometry: floor)
         scene.rootNode.addChildNode(floorNode)
         
-        // The cube (larger size for better visibility)
+        // made the cube larger
         let box = SCNBox(width: 0.35, height: 0.35, length: 0.35, chamferRadius: 0.03)
         let mat = SCNMaterial()
         mat.diffuse.contents = UIColor.systemTeal
