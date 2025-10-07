@@ -8,8 +8,12 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var motionVM = MotionVM()
     var body: some View {
-        VStack {
+        ZStack {
+            Color.black.ignoressafeArea()
+        
+            VStack(spacing: 0) {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
